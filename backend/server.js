@@ -1,35 +1,31 @@
 const express = require('express');
+const http = require('http');
 const dotenv = require('dotenv');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 const connectDB = require('./config/db');
-const menuRoutes = require('./routes/menuRoutes'); // Import menu routes
-const orderRoutes = require('./routes/orderRoutes'); // Import order routes
-const tableRoutes = require('./routes/tableRoutes'); // Import table routes
+const { init } = require('./sockets/socket'); // Import WebSocket initialization
 
-// Load environment variables
 dotenv.config();
-
-// Connect to MongoDB
 connectDB();
 
-// Create Express app
 const app = express();
+const server = http.createServer(app); // Create an HTTP server
 
-// Middleware to parse JSON
-app.use(express.json());
+app.use(cors());
+app.use(bodyParser.json());
 
-// Root route for testing
-app.get('/', (req, res) => {
-    res.send('Backend is running!');
-});
+// Import routes
+const menuRoutes = require('./routes/menuRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const tableRoutes = require('./routes/tableRoutes');
 
-app.use('/api/menu', menuRoutes); // Mount the routes at /api/menu
-app.use('/api/orders', orderRoutes); // Mount the routes at /api/orders
-app.use('/api/tables', tableRoutes); // Mount the routes at /api/tables
+app.use('/api/menu', menuRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/tables', tableRoutes);
 
-// Start the server
+// Initialize Socket.IO
+init(server);
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
-
-
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 
 const tableSchema = mongoose.Schema({
-    tableId: { type: String, required: true, unique: true }, // Unique table identifier
-    name: { type: String, required: true },                 // Friendly table name (e.g., "Table 1")
+    tableId: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    qrCode: { type: String } // Store the generated QR code URL or base64 data
 });
 
 module.exports = mongoose.model('Table', tableSchema);
