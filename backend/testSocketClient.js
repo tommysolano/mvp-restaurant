@@ -1,6 +1,7 @@
 const { io } = require('socket.io-client');
 
-const socket = io('http://localhost:5000'); // Connect to the local WebSocket server
+const SERVER_URL = process.env.SERVER || "http://localhost:5000"; // Default to local if not set
+const socket = io(SERVER_URL); // Use env variable
 
 socket.on('connect', () => {
     console.log(`Connected to WebSocket server: ${socket.id}`);

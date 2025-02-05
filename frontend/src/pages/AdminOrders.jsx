@@ -1,14 +1,15 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000");
+const API_URL = import.meta.env.VITE_API_URL; // Get backend URL from environment variable
+const socket = io(API_URL); // Use dynamic backend URL
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/orders")
+    axios.get(`${API_URL}/api/orders`)
       .then(response => setOrders(response.data))
       .catch(error => console.error("Error fetching orders:", error));
 
@@ -31,7 +32,7 @@ const AdminOrders = () => {
   }, []);
 
   const completeOrder = (orderId) => {
-    axios.patch(`http://localhost:5000/api/orders/${orderId}`, { status: "completed" })
+    axios.patch(`${API_URL}/api/orders/${orderId}`, { status: "completed" })
       .then(response => {
         setOrders(prevOrders =>
           prevOrders.map(order =>

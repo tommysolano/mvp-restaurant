@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL; // Use environment variable
+
 const AdminTables = () => {
   const [tables, setTables] = useState([]);
   const [tableName, setTableName] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/tables")
+    axios.get(`${API_URL}/api/tables`)
       .then(response => setTables(response.data))
       .catch(error => console.error("Error fetching tables:", error));
   }, []);
@@ -15,7 +17,7 @@ const AdminTables = () => {
     if (!tableName.trim()) return alert("Table name cannot be empty");
 
     const tableId = `Table${tables.length + 1}`;
-    axios.post("http://localhost:5000/api/tables", { tableId, name: tableName })
+    axios.post(`${API_URL}/api/tables`, { tableId, name: tableName })
       .then(response => {
         setTables([...tables, response.data]); // Update state with new table
         setTableName(""); // Reset input field

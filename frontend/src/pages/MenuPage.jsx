@@ -4,12 +4,14 @@ import axios from "axios";
 import MenuList from "../components/MenuList";
 import OrderForm from "../components/OrderForm"; // Import OrderForm
 
+const API_URL = import.meta.env.VITE_API_URL; // Use environment variable
+
 const MenuPage = () => {
   const { tableId } = useParams();
   const [menu, setMenu] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/menu")
+    axios.get(`${API_URL}/api/menu`) // Use env variable
       .then(response => setMenu(response.data))
       .catch(error => console.error("Error fetching menu:", error));
   }, []);

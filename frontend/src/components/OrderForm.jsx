@@ -5,6 +5,8 @@ import axios from "axios";
 const OrderForm = ({ tableId, menu }) => {
   const [selectedItems, setSelectedItems] = useState([]);
 
+  const API_URL = import.meta.env.VITE_API_URL; // Use environment variable
+
   // Add item to order
   const handleSelect = (item) => {
     setSelectedItems((prev) => {
@@ -23,20 +25,20 @@ const OrderForm = ({ tableId, menu }) => {
     if (selectedItems.length === 0) return alert("Select at least one item");
 
     const order = {
-        tableId,
-        items: selectedItems.map(({ name, quantity, price }) => ({
-          name,
-          quantity,
-          price,
-        })),
-        totalPrice: selectedItems.reduce(
-          (acc, item) => acc + item.price * item.quantity,
-          0
-        ),
-      };
+      tableId,
+      items: selectedItems.map(({ name, quantity, price }) => ({
+        name,
+        quantity,
+        price,
+      })),
+      totalPrice: selectedItems.reduce(
+        (acc, item) => acc + item.price * item.quantity,
+        0
+      ),
+    };
 
     axios
-      .post("http://localhost:5000/api/orders", order)
+      .post(`${API_URL}/api/orders`, order) // Use env variable
       .then(() => {
         alert("Order placed successfully!");
         setSelectedItems([]); // Reset selection
