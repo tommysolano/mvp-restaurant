@@ -9,7 +9,7 @@ router.post('/', async (req, res) => {
         const { tableId, name } = req.body;
         
         // Generate a QR Code URL that directs to the table's menu
-        const qrCodeURL = `http://localhost:3000/menu/${tableId}`; // Replace with frontend URL
+        const qrCodeURL = `https://mvp-restaurant.vercel.app/menu/${tableId}`; // Replace with frontend URL
         const qrCodeData = await QRCode.toDataURL(qrCodeURL); // Generate QR Code as base64
 
         // Save the table with the generated QR code
