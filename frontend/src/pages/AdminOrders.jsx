@@ -1,0 +1,68 @@
+import  { useEffect, useState } from "react";
+import axios from "axios";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:5000");
+
+const AdminOrders = () => {
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/orders")
+      .then(response => setOrders(response.data))
+      .catch(error => console.error("Error fetching orders:", error));
+
+    socket.on("newOrder", (order) => {
+      setOrders(prevOrders => [...prevOrders, order]);
+    });
+
+    socket.on("orderUpdated", (updatedOrder) => {
+      setOrders(prevOrders =>
+        prevOrders.map(order =>
+          order._id === updatedOrder._id ? updatedOrder : order
+        )
+      );
+    });
+
+    return () => {
+      socket.off("newOrder");
+      socket.off("orderUpdated");
+    };
+  }, []);
+
+  const completeOrder = (orderId) => {
+    axios.patch(`http://localhost:5000/api/orders/${orderId}`, { status: "completed" })
+      .then(response => {
+        setOrders(prevOrders =>
+          prevOrders.map(order =>
+            order._id === response.data._id ? response.data : order
+          )
+        );
+      })
+      .catch(error => console.error("Error updating order:", error));
+  };
+
+  return (
+    <div>
+      <h1>Restaurant Orders</h1>
+      {orders.length === 0 ? <p>No orders yet...</p> : (
+        <ul>
+          {orders.map(order => (
+            <li key={order._id}>
+              <strong>Table {order.tableId}:</strong>
+              {order.items.map(item => (
+                <p key={item.name}>{item.quantity}x {item.name}</p>
+              ))}
+              <p>Status: {order.status}</p>
+              {order.status !== "completed" && (
+                <button onClick={() => completeOrder(order._id)}>Complete Order</button>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default AdminOrders;
